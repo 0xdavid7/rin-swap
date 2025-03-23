@@ -43,15 +43,12 @@ contract RinTest is Test {
 
     function test_SetFeeRate() public {
         uint256 newFeeRate = 200; // 2%
-
-        console2.log("Owner: ", rinSwap.owner());
-        console2.log("User1: ", user1);
-
         // Should fail if not owner
         vm.prank(user1);
         vm.expectRevert();
         rinSwap.setFeeRate(newFeeRate);
 
+        vm.prank(owner);
         // Should succeed if owner
         vm.expectEmit(true, true, true, true);
         emit RinSwap.FeeRateChanged(initialFeeRate, newFeeRate);
@@ -62,6 +59,7 @@ contract RinTest is Test {
 
     function test_SetFeeRateExceedsMax() public {
         uint256 invalidFeeRate = 10_001;
+        vm.prank(owner);
         vm.expectRevert(RinSwap.InvalidFeeRate.selector);
         rinSwap.setFeeRate(invalidFeeRate);
     }

@@ -185,4 +185,19 @@ contract RinTest is Test {
         assertEq(address(rinSwap).balance, 0);
         console2.log("Owner balance: ", ownerBalanceAfter);
     }
+
+    function test_estimateBuyOrder() public view {
+        (uint256 amount, uint256 fee) = rinSwap.estimateBuy(PEPE, 1 ether);
+        console2.log("Estimated amount: ", amount);
+        console2.log("Estimated fee: ", fee);
+    }
+
+    function test_estimateSellOrder() public view {
+        (uint256 pepeAmout, uint256 buyFee) = rinSwap.estimateBuy(PEPE, 1 ether);
+        (uint256 ethAmount, uint256 sellFee) = rinSwap.estimateSell(PEPE, pepeAmout);
+        console2.log("Estimated PEPE amount: ", pepeAmout);
+        console2.log("Estimated ETH amount: ", ethAmount);
+        console2.log("Estimated buy fee: ", buyFee);
+        console2.log("Estimated sell fee: ", sellFee);
+    }
 }

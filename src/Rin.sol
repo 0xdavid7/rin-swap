@@ -121,6 +121,51 @@ contract RinSwap is Ownable {
         }
     }
 
+    function estimateBuy(
+        address tokenAddress,
+        uint256 ethAmount
+    )
+        external
+        view
+        returns (uint256 amountOut, uint256 fee)
+    {
+        if (ethAmount == 0) return (0, 0);
+
+        fee = _calculateFee(ethAmount);
+        uint256 swapAmount = ethAmount - fee;
+
+        address[] memory path = new address[](2);
+        path[0] = WETH;
+        path[1] = tokenAddress;
+
+        uint256[] memory amounts = UNISWAPV2_ROUTER.getAmountsOut(swapAmount, path);
+        amountOut = amounts[1];
+
+        return (amountOut, fee);
+    }
+
+    function estimateSell(
+        address tokenAddress,
+        uint256 tokenAmount
+    )
+        external
+        view
+        returns (uint256 amountOut, uint256 fee)
+    {
+        if (tokenAmount == 0) return (0, 0);
+
+        address[] memory path = new address[](2);
+        path[0] = tokenAddress;
+        path[1] = WETH;
+
+        uint256[] memory amounts = UNISWAPV2_ROUTER.getAmountsOut(tokenAmount, path);
+
+        fee = _calculateFee(amounts[1]);
+        amountOut = amounts[1] - fee;
+
+        return (amountOut, fee);
+    }
+
     function _calculateFee(uint256 amount) internal view returns (uint256) {
         return (amount * feeBps) / FEE_DENOMINATOR;
     }

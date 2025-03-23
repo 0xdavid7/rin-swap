@@ -1,7 +1,7 @@
 name: "CI"
 
 env:
-  API_KEY_ALCHEMY: ${{ secrets.API_KEY_ALCHEMY }}
+  ALCHEMY_API_KEY: ${{ secrets.ALCHEMY_API_KEY }}
   FOUNDRY_PROFILE: "ci"
 
 on:

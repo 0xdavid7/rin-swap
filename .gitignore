@@ -18,3 +18,7 @@ yarn.lock
 !broadcast
 broadcast/*
 broadcast/*/31337/
+.env.mainet
+.env.base
+.env.bnb
+.env.anvil

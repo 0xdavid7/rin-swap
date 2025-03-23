@@ -7,9 +7,12 @@
     "url": "https://github.com/rinnegan-io"
   },
   "dependencies": {
-    "@openzeppelin/contracts": "^5.0.1"
+    "@openzeppelin/contracts": "^5.0.1",
+    "viem": "^2.23.14"
   },
   "devDependencies": {
+    "@types/bun": "^1.2.5",
+    "dotenv": "^16.4.7",
     "forge-std": "github:foundry-rs/forge-std#v1.8.1",
     "prettier": "^3.0.0",
     "solhint": "^3.6.2"

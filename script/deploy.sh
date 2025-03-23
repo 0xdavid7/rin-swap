@@ -23,8 +23,8 @@ check_env() {
         missing=1
     fi
 
-    if [ -z "$SCANNER_API_KEY" ]; then
-        echo -e "${RED}Error: SCANNER_API_KEY is not set${NC}"
+    if [ -z "$API_KEY_ETHERSCAN" ]; then
+        echo -e "${RED}Error: API_KEY_ETHERSCAN is not set${NC}"
         missing=1
     fi
 
@@ -79,7 +79,7 @@ info() {
     echo -e "${BLUE}NETWORK:${NC}            $NETWORK"
     echo -e "${BLUE}RPC_URL:${NC}            $RPC_URL"
     echo -e "${BLUE}VERIFIER_URL:${NC}       $VERIFIER_URL"
-    echo -e "${BLUE}SCANNER_API_KEY:${NC}    $SCANNER_API_KEY"
+    echo -e "${BLUE}API_KEY_ETHERSCAN:${NC}    $API_KEY_ETHERSCAN"
     echo -e "${BLUE}ROUTER:${NC}             $ROUTER"
     echo -e "${BLUE}WETH:${NC}               $WETH"
     echo -e "${GREEN}═══════════════════════════════════════════════════════════════════════════════════════${NC}\n"
@@ -94,11 +94,13 @@ deploy() {
         --rpc-url $RPC_URL \
         --private-key $PRIVATE_KEY \
         --broadcast \
-        --verify \
-        --verifier-url $VERIFIER_URL \
-        --etherscan-api-key "${SCANNER_API_KEY}" \
-        --sig 'run(address,address)' \
-        $ROUTER $WETH"
+        --sig 'run(address,address)' $ROUTER $WETH"
+
+    # if network is fork, not verify
+    if [ "$NETWORK" != "fork" ]; then
+        FORGE_CMD="$FORGE_CMD --etherscan-api-key $API_KEY_ETHERSCAN"
+        FORGE_CMD="$FORGE_CMD --verify $VERIFIER_URL"
+    fi
 
     # Execute the command
     echo "Executing: $FORGE_CMD"

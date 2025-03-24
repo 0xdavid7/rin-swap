@@ -48,7 +48,7 @@ set_network_config() {
         WETH="0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"   # WETH
         ;;
     "base")
-        RPC_URL="base-mainnet.g.alchemy.com/v2/$ALCHEMY_API_KEY"
+        RPC_URL="https://base-mainnet.g.alchemy.com/v2/$ALCHEMY_API_KEY"
         VERIFIER_URL="https://api.etherscan.io/v2/api?chainid=8453"
         ROUTER="0x4752ba5dbc23f44d87826276bf6fd6b1c372ad24" # BaseSwap Router
         WETH="0x4200000000000000000000000000000000000006"   # WETH

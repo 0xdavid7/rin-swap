@@ -46,24 +46,43 @@ set_network_config() {
         VERIFIER_URL="https://api.etherscan.io/v2/api?chainid=1"
         ROUTER="0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D" # Uniswap V2 Router
         WETH="0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"   # WETH
+        VERIFY=true
         ;;
     "base")
         RPC_URL="https://base-mainnet.g.alchemy.com/v2/$ALCHEMY_API_KEY"
-        VERIFIER_URL="https://api.etherscan.io/v2/api?chainid=8453"
+        VERIFIER_URL="https://api.basescan.org/api"
         ROUTER="0x4752ba5dbc23f44d87826276bf6fd6b1c372ad24" # BaseSwap Router
         WETH="0x4200000000000000000000000000000000000006"   # WETH
+        VERIFY=true
         ;;
     "sepolia")
         RPC_URL="https://eth-sepolia.g.alchemy.com/v2/$ALCHEMY_API_KEY"
         VERIFIER_URL="https://api.etherscan.io/v2/api?chainid=11155111"
         ROUTER="0xeE567Fe1712Faf6149d80dA1E6934E354124CfE3" # Uniswap V2 Router
         WETH="0xfFf9976782d46CC05630D1f6eBAb18b2324d6B14"   # WETH
+        VERIFY=true
+        ;;
+    "bnb")
+        RPC_URL="https://bnb-mainnet.g.alchemy.com/v2/$ALCHEMY_API_KEY"
+        VERIFIER_URL="https://api.bscscan.com/api"
+        API_KEY_ETHERSCAN=$API_KEY_BSCSCAN
+        ROUTER="0x10ED43C718714eb63d5aA57B78B54704E256024E" # PancakeSwap RouterV2
+        WETH="0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"   # WBNB
+        VERIFY=true
         ;;
     "fork")
         RPC_URL="http://14.253.139.39:8545"
         VERIFIER_URL="https://api.etherscan.io/v2/api?chainid=1"
         ROUTER="0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D" # Uniswap V2 Router
         WETH="0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"   # WETH
+        VERIFY=false
+        ;;
+    "bnb-fork")
+        RPC_URL="http://14.253.139.39:18545"
+        VERIFIER_URL="https://api.bscscan.com/api"
+        ROUTER="0x10ED43C718714eb63d5aA57B78B54704E256024E" # PancakeSwap RouterV2
+        WETH="0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"   # WBNB
+        VERIFY=false
         ;;
     *)
         echo -e "${RED}Error: Unsupported network '$NETWORK'${NC}"
@@ -97,15 +116,21 @@ deploy() {
         --sig 'run(address,address)' $ROUTER $WETH"
 
     # if network is fork, not verify
-    if [ "$NETWORK" != "fork" ]; then
+    if [ "$VERIFY" = true ]; then
         FORGE_CMD="$FORGE_CMD --etherscan-api-key $API_KEY_ETHERSCAN"
         FORGE_CMD="$FORGE_CMD --verify $VERIFIER_URL"
     fi
 
     # Execute the command
     echo "Executing: $FORGE_CMD"
-    eval $FORGE_CMD
 
+    read -p "Continue with deployment? (y/n): " confirm
+    if [[ $confirm != "y" && $confirm != "Y" ]]; then
+        echo "Deployment cancelled"
+        exit 0
+    fi
+
+    eval $FORGE_CMD
     if [ $? -eq 0 ]; then
         echo -e "${GREEN}Deployment successful!${NC}"
     else
@@ -128,13 +153,6 @@ main() {
 
     # Display deployment information
     info
-
-    # Confirm deployment
-    read -p "Continue with deployment? (y/n): " confirm
-    if [[ $confirm != "y" && $confirm != "Y" ]]; then
-        echo "Deployment cancelled"
-        exit 0
-    fi
 
     # Deploy the contract
     deploy
